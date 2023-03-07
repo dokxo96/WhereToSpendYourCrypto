@@ -32,6 +32,20 @@ export const NETWORKS = {
     blockExplorer: "",
     rpcUrl: localRpcUrl,
   },
+  _AuroraTestnet: {
+    name: "_AuroraTestnet",
+    color: "#622666",
+    chainId: 1313161555,
+    blockExplorer: "",
+    rpcUrl: "https://testnet.aurora.dev",
+  },
+  _BnbTestnet: {
+    name: "_BnbTestnet",
+    color: "#622666",
+    chainId: 97,
+    blockExplorer: "",
+    rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+  },
   mainnet: {
     name: "mainnet",
     color: "#ff8b9e",

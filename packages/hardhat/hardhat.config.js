@@ -24,7 +24,7 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 //
 // Select the network you want to deploy to here:
 //
-const defaultNetwork = "localhost";
+const defaultNetwork = "AuroraTestnet";
 
 function mnemonic() {
   try {
@@ -67,6 +67,20 @@ module.exports = {
         (you can put in a mnemonic here to set the deployer locally)
 
       */
+    },
+    AuroraTestnet: {
+      url: "https://testnet.aurora.dev",
+      chainId: 1313161555,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
+    BnbTestnet: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545/", 
+      chainId: 97,
+      accounts: {
+        mnemonic: mnemonic(),
+      },
     },
     mainnet: {
       url: "https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad", // <---- YOUR INFURA ID! (or it won't work)
@@ -277,7 +291,7 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.8.4",
+        version: "0.8.18",
         settings: {
           optimizer: {
             enabled: true,
@@ -297,7 +311,7 @@ module.exports = {
     ],
   },
   ovm: {
-    solcVersion: "0.7.6",
+    solcVersion: "0.8.18",
   },
   namedAccounts: {
     deployer: {
