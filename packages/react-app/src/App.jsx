@@ -11,7 +11,7 @@ import {
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, Route, Switch, useLocation } from "react-router-dom";
-import "./App.css";
+
 import {
   Account,
   Contract,
@@ -32,6 +32,7 @@ import { getRPCPollTime, Transactor, Web3ModalSetup } from "./helpers";
 import { Home, ExampleUI, Hints, Subgraph } from "./views";
 import { useStaticJsonRPC, useGasPrice } from "./hooks";
 import Map_view from "./components/map.component";
+import Createbussines from "./components/form.createbusiness";
 const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-eth !
@@ -307,8 +308,15 @@ function App(props) {
         <Menu.Item key="/">
           <Link to="/">App Home</Link>
         </Menu.Item>
+        <Menu.Item key="/Createbussines">
+          <Link to="/Createbussines">Create Bussines</Link>
+        </Menu.Item>
+
         <Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
+        </Menu.Item>
+        <Menu.Item key="/wtsyc">
+          <Link to="/wtsyc">Debug wtsyc</Link>
         </Menu.Item>
 
         {/* <Menu.Item key="/subgraph">
@@ -321,6 +329,16 @@ function App(props) {
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
           <Map_view />
         </Route>
+
+        <Route exact path="/Createbussines">
+          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
+          <div className="flex flex-col">
+            <Map_view />
+            <Createbussines />
+          </div>
+
+          {/* <BusinessForm/> */}
+        </Route>
         <Route exact path="/debug">
           {/*
                 🎛 this scaffolding is full of commonly used components
@@ -330,6 +348,23 @@ function App(props) {
 
           <Contract
             name="YourContract"
+            price={price}
+            signer={userSigner}
+            provider={localProvider}
+            address={address}
+            blockExplorer={blockExplorer}
+            contractConfig={contractConfig}
+          />
+        </Route>
+        <Route exact path="/wtsyc">
+          {/*
+                🎛 this scaffolding is full of commonly used components
+                this <Contract/> component will automatically parse your ABI
+                and give you a form to interact with it locally
+            */}
+
+          <Contract
+            name="WTSYC"
             price={price}
             signer={userSigner}
             provider={localProvider}
