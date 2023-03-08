@@ -4,7 +4,7 @@ import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom";
 import App from "./App";
-//import "./index.css";
+import "./index.css";
 
 const themes = {
   dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
@@ -22,7 +22,7 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme || "light"}>
+    <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme || "dark"}>
       <BrowserRouter>
         <App subgraphUri={subgraphUri} />
       </BrowserRouter>

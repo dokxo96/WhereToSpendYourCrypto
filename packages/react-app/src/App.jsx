@@ -1,5 +1,5 @@
 import { Button, Col, Menu, Row } from "antd";
-
+import "./dist/output.css";
 import "antd/dist/antd.css";
 import {
   useBalance,
@@ -331,7 +331,7 @@ function App(props) {
 
         <Route exact path="/Createbussines">
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <div className="flex flex-col">
+          <div className="flex flex-row ">
             <MapView />
             <Createbussines />
           </div>
