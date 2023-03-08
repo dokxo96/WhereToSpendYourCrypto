@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography } from "antd";
-
+import logo from "../asset/logo2.png";
 const { Title, Text } = Typography;
 
 // displays a page header
@@ -9,6 +9,9 @@ export default function Header({ link, title, subTitle, ...props }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "1.2rem" }}>
       <div style={{ display: "flex", flexDirection: "column", flex: 1, alignItems: "start" }}>
+        <div className="w-80 h-20">
+          <img alt="d" src={logo} />
+        </div>
         <a href={link} target="_blank" rel="noopener noreferrer">
           <Title level={4} style={{ margin: "0 0.5rem 0 0" }}>
             {title}
@@ -23,8 +26,4 @@ export default function Header({ link, title, subTitle, ...props }) {
   );
 }
 
-Header.defaultProps = {
-  link: "https://github.com/scaffold-eth/scaffold-eth",
-  title: "Where to spend your crypto?🪙📍",
-  subTitle: "Crypto business at your hand!",
-};
+Header.defaultProps = {};

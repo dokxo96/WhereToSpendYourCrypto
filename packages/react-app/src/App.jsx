@@ -31,7 +31,8 @@ import deployedContracts from "./contracts/hardhat_contracts.json";
 import { getRPCPollTime, Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC, useGasPrice } from "./hooks";
 import MapView from "./components/map.component";
-import Createbussines from "./components/form.createbusiness";
+import axios from "axios";
+
 const { ethers } = require("ethers");
 /*
     Welcome to 🏗 scaffold-eth !
@@ -69,7 +70,32 @@ const providers = [
   `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
   "https://rpc.scaffoldeth.io:48544",
 ];
-
+export const pinJSONToIPFS = async JSONBody => {
+  const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+  return axios
+    .post(url, JSONBody, {
+      headers: {
+        pinata_api_key: process.env.REACT_APP_PINATA_API_KEY,
+        pinata_secret_api_key: process.env.REACT_APP_PINATA_API_SECRET,
+      },
+    })
+    .then(function (response) {
+      console.log("🪲 ~ file: form.createbusiness.jsx:14 ~ response:", response);
+      return {
+        success: true,
+        pinataUrl: response.data.IpfsHash,
+        //    pinataUrl: "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
+      };
+    })
+    .catch(function (error) {
+      console.log("🪲 ~ file: form.createbusiness.jsx:22 ~ pinJSONToIPFS ~ error:", error);
+      console.log(error);
+      return {
+        success: false,
+        message: error.message,
+      };
+    });
+};
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
@@ -134,6 +160,7 @@ function App(props) {
   const localChainId = localProvider && localProvider._network && localProvider._network.chainId;
   const selectedChainId =
     userSigner && userSigner.provider && userSigner.provider._network && userSigner.provider._network.chainId;
+  console.log("🪲 ~ file: App.jsx:162 ~ App ~ selectedChainId:", selectedChainId);
 
   // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
 
@@ -260,7 +287,108 @@ function App(props) {
   }, [loadWeb3Modal]);
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
+  const [_form, set_form] = useState({
+    b_name: "",
+    b_description: "",
+    b_latitude: "",
+    b_longitude: "",
+    b_status: "Active",
+    b_pinata_url: "",
+  });
 
+  const createJson = async () => {
+    let business_info = {
+      id: 0,
+      description: _form.b_description,
+      latitude: _form.b_latitude,
+      longitude: -_form.b_longitude,
+      status: true,
+    };
+
+    var data = JSON.stringify({
+      pinataOptions: {
+        cidVersion: 1,
+      },
+      pinataMetadata: {
+        name: _form.name,
+        keyvalues: {
+          customKey: "customValue",
+        },
+      },
+      pinataContent: {
+        business_info: business_info,
+      },
+    });
+
+    let retu = await pinJSONToIPFS(data);
+    console.log("🪲 ~ file: form.createbusiness.jsx:94 ~ createJson ~ retu:", retu);
+
+    set_form({ ..._form, b_pinata_url: retu.pinataUrl });
+
+    let Coincontract = contractConfig.deployedContracts[selectedChainId];
+    //   .contracts["WTSYC"];
+    console.log("🪲 ~ file: App.jsx:331 ~ createJson ~ Coincontract:", Coincontract);
+
+    return;
+
+    // // * Get the current provider
+    let provider = new ethers.providers.Web3Provider(window.ethereum);
+    // // * Create a new instance of the contract from the ABI,address and the provider
+    let cointossContract = new ethers.Contract(Coincontract.address, Coincontract.abi, provider);
+    // // * get the current signer
+    let signer = provider.getSigner();
+    // // * connect the contract and the signer
+    let cointossContractWithSigner = cointossContract.connect(signer);
+    // // * use the instance connected with the signer to call the wager method.
+    // /**
+    //  * @param wagetInputs.face : is the value for coin(1) or tail(0)
+    //  * @param wagetInputs.tokenAddress : is the token's address
+    //  * @param wagetInputs.tokenAmount: is the amount for the bet
+    //  * */
+    let res = await cointossContractWithSigner
+      .CreateBusiness(signer.getAddress, retu.pinataUrl, {
+        value: 0,
+        gasLimit: 2e7,
+      })
+      .then(response => {
+        console.log("🪲 ~ file: App.jsx:172 ~ PlayWager ~ response", response);
+      })
+      .catch(error => {
+        console.log("Oh, no! We encountered an error: ", error);
+      });
+  };
+
+  const CreateBusinessmet = async uri => {
+    // * recover the ABI from the JSON
+    let Coincontract = contractConfig.deployedContracts[selectedChainId].AuroraTestnet.contracts["WTSYC"];
+    // // * Get the current provider
+    let provider = new ethers.providers.Web3Provider(window.ethereum);
+    // // * Create a new instance of the contract from the ABI,address and the provider
+    let cointossContract = new ethers.Contract(Coincontract.address, Coincontract.abi, provider);
+    // // * get the current signer
+    let signer = provider.getSigner();
+    // // * connect the contract and the signer
+    let cointossContractWithSigner = cointossContract.connect(signer);
+    // // * use the instance connected with the signer to call the wager method.
+    // /**
+    //  * @param wagetInputs.face : is the value for coin(1) or tail(0)
+    //  * @param wagetInputs.tokenAddress : is the token's address
+    //  * @param wagetInputs.tokenAmount: is the amount for the bet
+    //  * */
+    let res = await cointossContractWithSigner
+      .CreateBusiness(signer.getAddress, uri, {
+        value: 0,
+        gasLimit: 2e7,
+      })
+      .then(response => {
+        console.log("🪲 ~ file: App.jsx:172 ~ PlayWager ~ response", response);
+      })
+      .catch(error => {
+        console.log("Oh, no! We encountered an error: ", error);
+      });
+
+    // console.log("🪲 ~ file: App.jsx:168 ~ result ~ Account:", address);
+  };
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -333,7 +461,45 @@ function App(props) {
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
           <div className="flex flex-row ">
             <MapView />
-            <Createbussines />
+            <div className="justify-center ml-10 mt-5">
+              <h1 className="text-3xl  text-white font-bold">Create a new business</h1>
+
+              <form className="flex flex-col gap-4">
+                <input
+                  className="bg-transparent w-[240px] h-10 border-1 text-white"
+                  value={_form.b_name}
+                  onChange={e => {
+                    set_form({ ..._form, b_name: e.target.value });
+                  }}
+                  placeholder="name"
+                />
+                <input
+                  className="bg-transparent w-[240px] h-10 border-1 text-white"
+                  value={_form.b_description}
+                  onChange={e => {
+                    set_form({ ..._form, b_description: e.target.value });
+                  }}
+                  placeholder="description"
+                />
+                <input
+                  className="bg-transparent w-[240px] h-10 border-1 text-white"
+                  value={_form.b_latitude}
+                  onChange={e => {
+                    set_form({ ..._form, b_latitude: e.target.value });
+                  }}
+                  placeholder="latitude"
+                />
+                <input
+                  className="bg-transparent w-[240px] h-10 border-1 text-white"
+                  value={_form.b_longitude}
+                  onChange={e => {
+                    set_form({ ..._form, b_longitude: e.target.value });
+                  }}
+                  placeholder="longitude"
+                />
+              </form>
+              <button onClick={createJson}> Create new businnes</button>
+            </div>
           </div>
 
           {/* <BusinessForm/> */}
