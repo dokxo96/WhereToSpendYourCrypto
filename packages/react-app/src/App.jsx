@@ -104,6 +104,8 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
+  const [tx, setTx] = useState({});
+
   const location = useLocation();
 
   const targetNetwork = NETWORKS[selectedNetwork];
@@ -325,11 +327,8 @@ function App(props) {
 
     set_form({ ..._form, b_pinata_url: retu.pinataUrl });
 
-    let Coincontract = contractConfig.deployedContracts[selectedChainId];
-    //   .contracts["WTSYC"];
+    let Coincontract = contractConfig.deployedContracts[selectedChainId][0].contracts.WTSYC;
     console.log("🪲 ~ file: App.jsx:331 ~ createJson ~ Coincontract:", Coincontract);
-
-    return;
 
     // // * Get the current provider
     let provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -345,8 +344,10 @@ function App(props) {
     //  * @param wagetInputs.tokenAddress : is the token's address
     //  * @param wagetInputs.tokenAmount: is the amount for the bet
     //  * */
+    console.log("calling the mint method", await signer.getAddress());
+
     let res = await cointossContractWithSigner
-      .CreateBusiness(signer.getAddress, retu.pinataUrl, {
+      .CreateBusiness(await signer.getAddress(), retu.pinataUrl, {
         value: 0,
         gasLimit: 2e7,
       })
@@ -382,6 +383,8 @@ function App(props) {
       })
       .then(response => {
         console.log("🪲 ~ file: App.jsx:172 ~ PlayWager ~ response", response);
+
+        setTx(response.hash);
       })
       .catch(error => {
         console.log("Oh, no! We encountered an error: ", error);
@@ -499,6 +502,10 @@ function App(props) {
                 />
               </form>
               <button onClick={createJson}> Create new businnes</button>
+
+              <div>
+                Your transaction has is : <a href={"https://explorer.testnet.aurora.dev/tx/" + tx}>{tx}</a>
+              </div>
             </div>
           </div>
 
