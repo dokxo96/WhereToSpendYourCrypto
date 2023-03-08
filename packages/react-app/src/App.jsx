@@ -469,7 +469,7 @@ function App(props) {
 
               <form className="flex flex-col gap-4">
                 <input
-                  className="bg-transparent w-[240px] h-10 border-1 text-white"
+                  className="bg-transparent w-[240px] h-10 border-1 text-red-200"
                   value={_form.b_name}
                   onChange={e => {
                     set_form({ ..._form, b_name: e.target.value });
@@ -501,10 +501,11 @@ function App(props) {
                   placeholder="longitude"
                 />
               </form>
-              <button onClick={createJson}> Create new businnes</button>
-
-              <div>
-                Your transaction has is : <a href={"https://explorer.testnet.aurora.dev/tx/" + tx}>{tx}</a>
+              <div className="w-64 ">
+                <button className=" mt-10" onClick={createJson}>
+                  {" "}
+                  Create new businnes
+                </button>
               </div>
             </div>
           </div>
